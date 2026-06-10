@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INACAP Intranet de Formalización</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- PANEL DE LOGIN -->
+    <div id="loginPanel" class="panel active">
+        <div class="login-container">
+            <h1>INACAP Intranet de Formalización</h1>
+            <form onsubmit="loginUser(event)">
+                <input type="email" id="loginEmail" placeholder="Correo" required>
+                <input type="password" id="loginPassword" placeholder="Contraseña" required>
+                <button type="submit">Iniciar Sesión</button>
+            </form>
+            <p><a href="#" onclick="showResetPassword(); return false;">¿Olvidaste tu contraseña?</a></p>
+            <div id="resetPasswordBox" style="display:none; margin-top: 15px; padding: 15px; border: 1px solid #ccc; border-radius: 6px;">
+                <h3>Restablecer contraseña</h3>
+                <form onsubmit="restablecerContrasena(event)">
+                    <input type="email" id="resetEmail" placeholder="Correo de usuario" required>
+                    <input type="password" id="resetPasswordInput" placeholder="Nueva contraseña" required>
+                    <input type="password" id="resetPasswordConfirm" placeholder="Repite la contraseña" required>
+                    <button type="submit">Restablecer contraseña</button>
+                    <button type="button" onclick="hideResetPassword()">Cancelar</button>
+                </form>
+            </div>
+            <p>¿No tienes cuenta? <a href="#" onclick="showRegister()">Regístrate aquí</a></p>
+        </div>
+    </div>
+
+    <!-- PANEL DE REGISTRO -->
+    <div id="registerPanel" class="panel">
+        <div class="register-container">
+            <h1>Crear Cuenta</h1>
+            <form onsubmit="registerUser(event)">
+                <input type="text" id="regName" placeholder="Nombre completo" required>
+                <input type="email" id="regEmail" placeholder="Correo" required>
+                <input type="password" id="regPassword" placeholder="Contraseña" required>
+                <select id="regRole" required>
+                    <option value="">Selecciona tu rol</option>
+                    <option value="estudiante">Estudiante</option>
+                    <option value="emprendedor">Emprendedor</option>
+                </select>
+                <button type="submit">Registrarse</button>
+            </form>
+            <p><a href="#" onclick="showLogin()">Volver al login</a></p>
+        </div>
+    </div>
+
+    <!-- PANEL ESTUDIANTE -->
+    <div id="estudiantePanel" class="panel">
+        <nav class="navbar">
+            <div class="nav-left">
+                <h2>INACAP Intranet</h2>
+            </div>
+            <div class="nav-right">
+                <span id="userDisplay"></span>
+                <button onclick="logout()">Cerrar Sesión</button>
+            </div>
+        </nav>
+
+        <div class="tab-buttons">
+            <button class="tab-btn active" onclick="showTab('mercado')">Marketplace</button>
+            <button class="tab-btn" onclick="showTab('misCompras')">Mis Compras</button>
+            <button class="tab-btn" onclick="showTab('ayudaEstudiante')">Pedir Ayuda</button>
+            <button class="tab-btn" onclick="showTab('formalizacion')">Formalización</button>
+        </div>
+
+        <div id="mercado" class="tab-content active">
+            <div class="filter-section">
+                <input type="text" id="searchProducto" placeholder="Buscar producto..." onkeyup="loadMarketplace()">
+            </div>
+            <div class="marketplace-section">
+                <h2>Cursos y asesorías INACAP</h2>
+                <div id="productosInacap" class="salas-grid"></div>
+            </div>
+            <div class="marketplace-section">
+                <h2>Productos de alumnos con membresía activa</h2>
+                <div id="productosAlumnos" class="salas-grid"></div>
+            </div>
+        </div>
+
+        <div id="misCompras" class="tab-content">
+            <h2>Mis Compras</h2>
+            <div id="comprasContainer" class="reservas-list"></div>
+        </div>
+
+        <div id="ayudaEstudiante" class="tab-content">
+            <h2>Solicitar Apoyo</h2>
+            <p>Pide ayuda para formalizar tu emprendimiento o buscar empleabilidad.</p>
+            <form onsubmit="enviarSolicitudAyuda(event)">
+                <input type="hidden" id="ayudaUsuarioId">
+                <select id="tipoAyuda" required>
+                    <option value="">Selecciona tipo de ayuda</option>
+                    <option value="Asesoría de emprendimiento">Asesoría de emprendimiento</option>
+                    <option value="Formalización de negocio">Formalización de negocio</option>
+                    <option value="Preparación laboral">Preparación laboral</option>
+                </select>
+                <textarea id="mensajeAyuda" placeholder="Describe tu necesidad" required></textarea>
+                <button type="submit">Enviar solicitud</button>
+            </form>
+            <div id="misSolicitudes" class="reservas-list mt-20"></div>
+        </div>
+
+        <div id="formalizacion" class="tab-content">
+            <h2>Ruta de Formalización</h2>
+            <ul class="formalizacion-list">
+                <li>1. Evalúa tu idea de negocio y público objetivo.</li>
+                <li>2. Define el tipo de empresa o emprendimiento.</li>
+                <li>3. Inscríbete en cursos y asesorías INACAP.</li>
+                <li>4. Solicita apoyo en trámites legales y contables.</li>
+                <li>5. Crea tu oferta de productos para vender en la intranet.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- PANEL EMPRENDEDOR -->
+    <div id="emprendedorPanel" class="panel">
+        <nav class="navbar">
+            <div class="nav-left">
+                <h2>INACAP Emprendedores</h2>
+            </div>
+            <div class="nav-right">
+                <span id="emprendedorDisplay"></span>
+                <button onclick="logout()">Cerrar Sesión</button>
+            </div>
+        </nav>
+
+        <div class="tab-buttons">
+            <button class="tab-btn active" onclick="showTabEmprendedor('miMembresia')">Membresía</button>
+            <button class="tab-btn" onclick="showTabEmprendedor('misProductos')">Mis Productos</button>
+            <button class="tab-btn" onclick="showTabEmprendedor('ventas')">Ventas</button>
+            <button class="tab-btn" onclick="showTabEmprendedor('ayudaEmprendedor')">Pedir Ayuda</button>
+        </div>
+
+        <div id="miMembresia" class="tab-content active">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Membresía Activa</h3>
+                    <p id="membresiaEstado" class="stat-value">---</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Vence en</h3>
+                    <p id="membresiaExpira" class="stat-value">---</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Costo membresía</h3>
+                    <p id="membresiaCosto" class="stat-value">$3.200</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Duración</h3>
+                    <p id="membresiaDuracion" class="stat-value">30 días</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Servicios incluidos</h3>
+                    <p id="membresiaServicios" class="stat-value">Publicación destacada, Banner en marketplace, Soporte prioritario</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Próximo pago</h3>
+                    <p id="membresiaPagoFecha" class="stat-value">---</p>
+                </div>
+            </div>
+            <p>Para publicar productos y vender a estudiantes debes tener una membresía activa. El valor de la membresía es de $3.200 pesos chilenos. La membresía incluye servicios de publicidad y soporte.</p>
+            <button onclick="comprarMembresia()" class="btn-principal">Comprar membresía</button>
+        </div>
+
+        <div id="misProductos" class="tab-content">
+            <button onclick="showProductoModal()" class="btn-principal">+ Publicar nuevo producto</button>
+            <div id="productosVendedor" class="salas-grid"></div>
+        </div>
+
+        <div id="ventas" class="tab-content">
+            <h2>Ventas</h2>
+            <div id="ventasContainer" class="reservas-list"></div>
+        </div>
+
+        <div id="ayudaEmprendedor" class="tab-content">
+            <h2>Solicitar Apoyo</h2>
+            <p>Pide ayuda para formalizar tu emprendimiento o preparar tu oferta comercial.</p>
+            <form onsubmit="enviarSolicitudAyuda(event)">
+                <input type="hidden" id="ayudaUsuarioIdEmprendedor">
+                <select id="tipoAyudaEmprendedor" required>
+                    <option value="">Selecciona tipo de ayuda</option>
+                    <option value="Asesoría de emprendimiento">Asesoría de emprendimiento</option>
+                    <option value="Formalización de negocio">Formalización de negocio</option>
+                    <option value="Marketing y ventas">Marketing y ventas</option>
+                </select>
+                <textarea id="mensajeAyudaEmprendedor" placeholder="Describe tu necesidad" required></textarea>
+                <button type="submit">Enviar solicitud</button>
+            </form>
+            <div id="misSolicitudesEmprendedor" class="reservas-list mt-20"></div>
+        </div>
+    </div>
+
+    <!-- PANEL ADMINISTRADOR -->
+    <div id="adminPanel" class="panel">
+        <nav class="navbar">
+            <div class="nav-left">
+                <h2>Panel Administrativo INACAP</h2>
+            </div>
+            <div class="nav-right">
+                <span id="adminUserDisplay"></span>
+                <button onclick="logout()">Cerrar Sesión</button>
+            </div>
+        </nav>
+
+        <div class="tab-buttons">
+            <button class="tab-btn active" onclick="showTabAdmin('estadisticas')">Estadísticas</button>
+            <button class="tab-btn" onclick="showTabAdmin('usuarios')">Usuarios</button>
+            <button class="tab-btn" onclick="showTabAdmin('ayudasAdmin')">Solicitudes</button>
+        </div>
+
+        <div id="estadisticas" class="tab-content active">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Total Usuarios</h3>
+                    <p id="statUsuarios" class="stat-value">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Emprendedores</h3>
+                    <p id="statEmprendedores" class="stat-value">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Estudiantes</h3>
+                    <p id="statEstudiantes" class="stat-value">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Membresías activas</h3>
+                    <p id="statMembresias" class="stat-value">0</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="usuarios" class="tab-content">
+            <h2>Gestión de Usuarios</h2>
+            <div id="usuariosContainer" class="usuarios-list"></div>
+        </div>
+
+        <div id="ayudasAdmin" class="tab-content">
+            <h2>Solicitudes de Ayuda</h2>
+            <div id="solicitudesContainer" class="reservas-list"></div>
+        </div>
+    </div>
+
+    <!-- MODAL PRODUCTO -->
+    <div id="modalProducto" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('modalProducto')">&times;</span>
+            <h2 id="modalProductoTitulo">Publicar Producto</h2>
+            <form onsubmit="guardarProducto(event)">
+                <input type="text" id="productoTitulo" placeholder="Título del producto" required>
+                <textarea id="productoDescripcion" placeholder="Descripción" required></textarea>
+                <input type="number" id="productoPrecio" placeholder="Precio ($)" min="1" required>
+                <input type="number" id="productoStock" placeholder="Stock disponible" min="1" required>
+                <input type="text" id="productoCategoria" placeholder="Categoría" required>
+                <button type="submit">Guardar Producto</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL COMPRA -->
+    <div id="modalCompra" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('modalCompra')">&times;</span>
+            <h2>Confirmar Compra</h2>
+            <div id="compraDetails"></div>
+            <form onsubmit="confirmarCompra(event)">
+                <input type="hidden" id="compraProductoId">
+                <input type="number" id="compraCantidad" min="1" value="1" required>
+                <button type="submit">Comprar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL AYUDA -->
+    <div id="modalAyuda" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('modalAyuda')">&times;</span>
+            <h2>Solicitud enviada</h2>
+            <p id="ayudaConfirmacionText"></p>
+            <button onclick="closeModal('modalAyuda')">Cerrar</button>
+        </div>
+    </div>
+
+    <script src="funciones.js"></script>
+</body>
+</html>
