@@ -110,52 +110,128 @@ function limpiarUsuarioCorrupto() {
 
 function crearProductosEjemplo(vendedorId, adminId) {
     return [
-        // Cursos INACAP
+        // Productos INACAP
         {
             id: generateId(),
             vendedorId: adminId,
-            title: 'Herramientas de Marketing INACAP',
-            description: 'Curso práctico de marketing digital con herramientas clave para aumentar tus ventas. Incluye certificado intermedio.',
-            price: 3500,
-            stock: 30,
-            category: 'Marketing',
+            title: 'Mochila universitaria resistente',
+            description: 'Mochila con múltiples compartimentos ideal para libros, laptop y útiles escolares.',
+            price: 12000,
+            stock: 35,
+            category: 'Útiles',
             source: 'inacap',
             dateAdded: new Date().toISOString()
         },
         {
             id: generateId(),
             vendedorId: adminId,
-            title: 'Asesoría legal INACAP',
-            description: 'Asesoría legal para emprendedores con foco en formalización y trámites empresariales. Incluye certificado intermedio.',
-            price: 3000,
+            title: 'Botella térmica ecológica',
+            description: 'Botella reutilizable para bebidas frías o calientes durante todo el día en el campus.',
+            price: 7500,
+            stock: 40,
+            category: 'Hogar',
+            source: 'inacap',
+            dateAdded: new Date().toISOString()
+        },
+        {
+            id: generateId(),
+            vendedorId: adminId,
+            title: 'Set de útiles escolares',
+            description: 'Pack con cuadernos, lápices, marcadores y reglas para estudiantes de todas las carreras.',
+            price: 9800,
+            stock: 50,
+            category: 'Útiles',
+            source: 'inacap',
+            dateAdded: new Date().toISOString()
+        },
+        {
+            id: generateId(),
+            vendedorId: adminId,
+            title: 'Lámpara de escritorio LED',
+            description: 'Luz ajustable para estudiar y trabajar cómodamente en tu espacio de estudio.',
+            price: 14500,
             stock: 20,
-            category: 'Asesoría legal',
+            category: 'Tecnología',
             source: 'inacap',
             dateAdded: new Date().toISOString()
         },
         {
             id: generateId(),
             vendedorId: adminId,
-            title: 'Plan de negocios INACAP',
-            description: 'Taller de plan de negocios para estructurar tu emprendimiento y mejorar tu propuesta comercial. Incluye certificado intermedio.',
-            price: 3500,
-            stock: 25,
-            category: 'Plan de negocios',
+            title: 'Cargador portátil USB',
+            description: 'Powerbank compacto para mantener tu celular y dispositivo cargados fuera de clase.',
+            price: 16000,
+            stock: 18,
+            category: 'Tecnología',
             source: 'inacap',
             dateAdded: new Date().toISOString()
         },
-        // Productos de alumnos con membresía
         {
             id: generateId(),
             vendedorId: vendedorId,
-            title: 'Curso Express de Marketing Digital',
-            description: 'Material para aprender marketing digital aplicado a emprendimientos.',
-            price: 12000,
-            stock: 15,
-            category: 'Educación',
+            title: 'Kit de apuntes y resúmenes',
+            description: 'Apuntes organizados y resúmenes de materias clave hechos por estudiantes.',
+            price: 8500,
+            stock: 12,
+            category: 'Academia',
             source: 'alumno',
             dateAdded: new Date().toISOString()
         },
+        {
+            id: generateId(),
+            vendedorId: vendedorId,
+            title: 'Tarjeta de transporte recargable',
+            description: 'Recarga rápida para viajar entre la casa y la universidad durante el mes.',
+            price: 5000,
+            stock: 30,
+            category: 'Transporte',
+            source: 'alumno',
+            dateAdded: new Date().toISOString()
+        },
+        {
+            id: generateId(),
+            vendedorId: vendedorId,
+            title: 'Camiseta personalizada INACAP',
+            description: 'Camiseta cómoda con diseño exclusivo para estudiantes de la intranet.',
+            price: 14000,
+            stock: 22,
+            category: 'Ropa',
+            source: 'alumno',
+            dateAdded: new Date().toISOString()
+        },
+        {
+            id: generateId(),
+            vendedorId: vendedorId,
+            title: 'Bolsa reutilizable para compras',
+            description: 'Bolsa resistente y plegable ideal para traer a clases o hacer compras en el campus.',
+            price: 6200,
+            stock: 25,
+            category: 'Hogar',
+            source: 'alumno',
+            dateAdded: new Date().toISOString()
+        },
+        {
+            id: generateId(),
+            vendedorId: vendedorId,
+            title: 'Kit de primeros auxilios básico',
+            description: 'Pequeño botiquín para emergencias menores en residencia o viajes cortos.',
+            price: 7200,
+            stock: 15,
+            category: 'Salud',
+            source: 'alumno',
+            dateAdded: new Date().toISOString()
+        },
+        {
+            id: generateId(),
+            vendedorId: vendedorId,
+            title: 'Voucher de comida rápida',
+            description: 'Cupón para canjear en la cafetería del campus durante la semana.',
+            price: 9000,
+            stock: 18,
+            category: 'Alimentos',
+            source: 'alumno',
+            dateAdded: new Date().toISOString()
+        }
         {
             id: generateId(),
             vendedorId: vendedorId,

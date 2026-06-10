@@ -65,7 +65,6 @@
             <button class="tab-btn" onclick="showTab('misCompras')">Mis Compras</button>
             <button class="tab-btn" onclick="showTab('ayudaEstudiante')">Pedir Ayuda</button>
             <button class="tab-btn" onclick="showTab('formalizacion')">Formalización</button>
-            <button class="tab-btn" onclick="comprarMembresia()" id="btnComprarMembresia" style="background: var(--success); color: white; display: none;">Comprar Membresía</button>
             <button class="tab-btn" onclick="abrirZonaEmprendedor()" id="btnEmprendedor" style="background: var(--primary); margin-left: auto;">Mi Zona de Emprendedor</button>
         </div>
 
@@ -74,7 +73,7 @@
                 <input type="text" id="searchProducto" placeholder="Buscar producto..." onkeyup="loadMarketplace()">
             </div>
             <div class="marketplace-section">
-                <h2>Cursos y asesorías INACAP</h2>
+                <h2>Productos destacados INACAP</h2>
                 <div id="productosInacap" class="salas-grid"></div>
             </div>
             <div class="marketplace-section">
@@ -110,10 +109,11 @@
             <ul class="formalizacion-list">
                 <li>1. Evalúa tu idea de negocio y público objetivo.</li>
                 <li>2. Define el tipo de empresa o emprendimiento.</li>
-                <li>3. Inscríbete en cursos y asesorías INACAP.</li>
+                <li>3. Elige los productos que vas a ofrecer con valor práctico para estudiantes.</li>
                 <li>4. Solicita apoyo en trámites legales y contables.</li>
                 <li>5. Crea tu oferta de productos para vender en la intranet.</li>
             </ul>
+            <button onclick="comprarMembresia()" id="btnComprarMembresia" class="btn-principal" style="display:none; margin-top: 20px;">Comprar Membresía</button>
         </div>
 
         <div id="carrito" class="tab-content">
