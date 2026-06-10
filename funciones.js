@@ -67,6 +67,12 @@ function initializeApp() {
     if (!Array.isArray(JSON.parse(localStorage.getItem('compras') || '[]'))) {
         localStorage.setItem('compras', JSON.stringify([]));
     }
+    if (!Array.isArray(JSON.parse(localStorage.getItem('carrito') || '[]'))) {
+        localStorage.setItem('carrito', JSON.stringify([]));
+    }
+    if (!Array.isArray(JSON.parse(localStorage.getItem('wishlist') || '[]'))) {
+        localStorage.setItem('wishlist', JSON.stringify([]));
+    }
 
     const savedUser = localStorage.getItem('currentUser');
     if (savedUser) {
@@ -104,6 +110,7 @@ function limpiarUsuarioCorrupto() {
 
 function crearProductosEjemplo(vendedorId, adminId) {
     return [
+        // Cursos INACAP
         {
             id: generateId(),
             vendedorId: adminId,
@@ -137,6 +144,7 @@ function crearProductosEjemplo(vendedorId, adminId) {
             source: 'inacap',
             dateAdded: new Date().toISOString()
         },
+        // Productos de alumnos con membresía
         {
             id: generateId(),
             vendedorId: vendedorId,
@@ -167,6 +175,105 @@ function crearProductosEjemplo(vendedorId, adminId) {
             price: 15000,
             stock: 10,
             category: 'Servicios',
+            source: 'alumno',
+            dateAdded: new Date().toISOString()
+        },
+        {
+            id: generateId(),
+            vendedorId: vendedorId,
+            title: 'Plantillas de Contabilidad Básica',
+            description: 'Archivos Excel listos para llevar contabilidad de tu negocio.',
+            price: 5500,
+            stock: 25,
+            category: 'Finanzas',
+            source: 'alumno',
+            dateAdded: new Date().toISOString()
+        },
+        {
+            id: generateId(),
+            vendedorId: vendedorId,
+            title: 'Logo Design Pack',
+            description: 'Diseño personalizado de logo para emprendedores y pequeños negocios.',
+            price: 25000,
+            stock: 8,
+            category: 'Diseño',
+            source: 'alumno',
+            dateAdded: new Date().toISOString()
+        },
+        {
+            id: generateId(),
+            vendedorId: vendedorId,
+            title: 'Estrategia de Redes Sociales',
+            description: 'Plan estratégico de 30 días para aumentar seguidores y engagement en redes.',
+            price: 9500,
+            stock: 12,
+            category: 'Marketing',
+            source: 'alumno',
+            dateAdded: new Date().toISOString()
+        },
+        {
+            id: generateId(),
+            vendedorId: vendedorId,
+            title: 'Kit de Branding Completo',
+            description: 'Identidad visual completa: logo, paleta de colores, tipografía y guía de marca.',
+            price: 35000,
+            stock: 6,
+            category: 'Diseño',
+            source: 'alumno',
+            dateAdded: new Date().toISOString()
+        },
+        {
+            id: generateId(),
+            vendedorId: vendedorId,
+            title: 'Curso de Ventas B2B',
+            description: 'Técnicas avanzadas para vender productos y servicios a otras empresas.',
+            price: 18000,
+            stock: 14,
+            category: 'Educación',
+            source: 'alumno',
+            dateAdded: new Date().toISOString()
+        },
+        {
+            id: generateId(),
+            vendedorId: vendedorId,
+            title: 'Plantilla de Propuestas Comerciales',
+            description: 'Documentos profesionales para presentar propuestas a potenciales clientes.',
+            price: 4500,
+            stock: 30,
+            category: 'Emprendimiento',
+            source: 'alumno',
+            dateAdded: new Date().toISOString()
+        },
+        {
+            id: generateId(),
+            vendedorId: vendedorId,
+            title: 'Auditoría de Sitio Web',
+            description: 'Análisis completo de tu presencia digital y recomendaciones de mejora.',
+            price: 22000,
+            stock: 9,
+            category: 'Digital',
+            source: 'alumno',
+            dateAdded: new Date().toISOString()
+        },
+        {
+            id: generateId(),
+            vendedorId: vendedorId,
+            title: 'Guía de Exportación para Pymes',
+            description: 'Manual completo para internacionalizar tu negocio y exportar productos.',
+            price: 19500,
+            stock: 11,
+            category: 'Negocios',
+            source: 'alumno',
+            dateAdded: new Date().toISOString()
+        },
+        {
+            id: generateId(),
+            vendedorId: vendedorId,
+            title: 'Template de Landing Page',
+            description: 'Página de ventas lista para convertir visitantes en clientes.',
+            price: 7500,
+            stock: 18,
+            category: 'Digital',
             source: 'alumno',
             dateAdded: new Date().toISOString()
         }
@@ -283,21 +390,24 @@ function logout() {
 function showUserPanel() {
     document.querySelectorAll('.panel').forEach(panel => panel.classList.remove('active'));
     if (!currentUser) return;
-    if (currentUser.role === 'estudiante') {
+    if (currentUser.role === 'estudiante' || currentUser.role === 'emprendedor') {
         document.getElementById('estudiantePanel').classList.add('active');
         document.getElementById('userDisplay').textContent = `👤 ${currentUser.nombre}`;
         document.getElementById('ayudaUsuarioId').value = currentUser.id;
+        
+        const btnEmprendedor = document.getElementById('btnEmprendedor');
+        const tieneMembresia = currentUser.membershipActive && currentUser.membershipExpiry && new Date(currentUser.membershipExpiry) > new Date();
+        if (tieneMembresia) {
+            btnEmprendedor.style.display = 'block';
+        } else {
+            btnEmprendedor.style.display = 'none';
+        }
+        
         loadMarketplace();
         loadMisCompras();
         loadSolicitudesEstudiante();
-    } else if (currentUser.role === 'emprendedor') {
-        document.getElementById('emprendedorPanel').classList.add('active');
-        document.getElementById('emprendedorDisplay').textContent = `👤 ${currentUser.nombre}`;
-        document.getElementById('ayudaUsuarioIdEmprendedor').value = currentUser.id;
-        loadMembresia();
-        loadMisProductos();
-        loadVentas();
-        loadSolicitudesEmprendedor();
+        updateCartCount();
+        updateWishlistCount();
     } else if (currentUser.role === 'admin') {
         document.getElementById('adminPanel').classList.add('active');
         document.getElementById('adminUserDisplay').textContent = `👤 ${currentUser.nombre}`;
@@ -312,6 +422,8 @@ function showTab(tabId) {
     document.getElementById(tabId).classList.add('active');
     if (tabId === 'mercado') loadMarketplace();
     if (tabId === 'misCompras') loadMisCompras();
+    if (tabId === 'carrito') loadCarrito();
+    if (tabId === 'deseados') loadDeseados();
     if (tabId === 'ayudaEstudiante') loadSolicitudesEstudiante();
 }
 
@@ -365,7 +477,10 @@ function loadMarketplace() {
 }
 
 function renderProductCards(productos) {
-    return productos.map(producto => `
+    const wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+    return productos.map(producto => {
+        const enDeseados = wishlist.includes(producto.id);
+        return `
         <div class="product-card">
             <div class="sala-header">
                 <h3>${producto.title}</h3>
@@ -376,11 +491,13 @@ function renderProductCards(productos) {
                 <p><strong>Precio:</strong> $${producto.price}</p>
                 <p><strong>Stock:</strong> ${producto.stock}</p>
                 <div class="sala-buttons">
-                    <button onclick="abrirCompra('${producto.id}')" ${producto.stock === 0 ? 'disabled' : ''}>Comprar</button>
+                    <button onclick="agregarAlCarrito('${producto.id}')" ${producto.stock === 0 ? 'disabled' : ''}>🛒 Carrito</button>
+                    <button onclick="agregarADeseados('${producto.id}')" class="btn-editar">${enDeseados ? '💔 Remover' : '❤️ Deseado'}</button>
                 </div>
             </div>
         </div>
-    `).join('');
+    `;
+    }).join('');
 }
 
 function abrirCompra(productId) {
@@ -397,30 +514,39 @@ function abrirCompra(productId) {
     openModal('modalCompra');
 }
 
-function confirmarCompra(event) {
-    event.preventDefault();
-    const productId = document.getElementById('compraProductoId').value;
-    const cantidad = parseInt(document.getElementById('compraCantidad').value, 10);
+function confirmarCompra(event, productId = null, cantidad = null) {
+    if (event && event.preventDefault) event.preventDefault();
+    
+    const productIdFinal = productId || document.getElementById('compraProductoId').value;
+    const cantidadFinal = cantidad || parseInt(document.getElementById('compraCantidad').value, 10);
+    
     const productos = JSON.parse(localStorage.getItem('productos')) || [];
     const compras = JSON.parse(localStorage.getItem('compras')) || [];
-    const producto = productos.find(p => p.id === productId);
+    const producto = productos.find(p => p.id === productIdFinal);
+    
     if (!producto) return alert('Producto no encontrado');
-    if (cantidad <= 0 || cantidad > producto.stock) return alert('Cantidad inválida o excede el stock');
-    const total = producto.price * cantidad;
+    if (cantidadFinal <= 0 || cantidadFinal > producto.stock) return alert('Cantidad inválida o excede el stock');
+    
+    const total = producto.price * cantidadFinal;
     compras.push({
         id: generateId(),
         productoId: producto.id,
         compradorId: currentUser.id,
         vendedorId: producto.vendedorId,
-        cantidad: cantidad,
+        cantidad: cantidadFinal,
         total: total,
         fecha: new Date().toISOString()
     });
-    producto.stock -= cantidad;
+    
+    producto.stock -= cantidadFinal;
     localStorage.setItem('productos', JSON.stringify(productos));
     localStorage.setItem('compras', JSON.stringify(compras));
-    closeModal('modalCompra');
-    alert('Compra realizada con éxito.');
+    
+    if (event && event.preventDefault) {
+        closeModal('modalCompra');
+        alert('Compra realizada con éxito.');
+    }
+    
     loadMarketplace();
     loadMisCompras();
     if (currentUser.role === 'emprendedor') loadVentas();
@@ -764,6 +890,187 @@ function toggleSolicitudStatus(solicitudId) {
     loadSolicitudesAdmin();
 }
 
+// ========== CARRITO DE COMPRAS ==========
+function agregarAlCarrito(productoId) {
+    const productos = JSON.parse(localStorage.getItem('productos')) || [];
+    const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+    const producto = productos.find(p => p.id === productoId);
+    if (!producto) return;
+    
+    const itemCarrito = carrito.find(item => item.productoId === productoId);
+    if (itemCarrito) {
+        itemCarrito.cantidad += 1;
+    } else {
+        carrito.push({
+            productoId: productoId,
+            cantidad: 1
+        });
+    }
+    localStorage.setItem('carrito', JSON.stringify(carrito));
+    updateCartCount();
+    alert('Producto agregado al carrito');
+}
+
+function updateCartCount() {
+    const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+    const total = carrito.reduce((sum, item) => sum + item.cantidad, 0);
+    document.getElementById('cartCount').textContent = total;
+}
+
+function updateWishlistCount() {
+    const wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+    document.getElementById('wishlistCount').textContent = wishlist.length;
+}
+
+function loadCarrito() {
+    const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+    const productos = JSON.parse(localStorage.getItem('productos')) || [];
+    const container = document.getElementById('carritoContainer');
+    const totalDiv = document.getElementById('carritoTotal');
+    
+    if (carrito.length === 0) {
+        container.innerHTML = '<p class="empty-message">Tu carrito está vacío</p>';
+        totalDiv.style.display = 'none';
+        return;
+    }
+    
+    let total = 0;
+    container.innerHTML = carrito.map(item => {
+        const producto = productos.find(p => p.id === item.productoId) || { title: 'Producto no encontrado', price: 0 };
+        const subtotal = producto.price * item.cantidad;
+        total += subtotal;
+        
+        return `
+            <div class="reserva-card">
+                <h4>${producto.title}</h4>
+                <div class="reserva-info">
+                    <p><strong>Precio unitario:</strong> $${producto.price}</p>
+                    <p><strong>Cantidad:</strong> 
+                        <input type="number" min="1" value="${item.cantidad}" onchange="actualizarCantidadCarrito('${item.productoId}', this.value)" style="width: 50px; padding: 5px;">
+                    </p>
+                    <p><strong>Subtotal:</strong> $${subtotal}</p>
+                </div>
+                <button onclick="eliminarDelCarrito('${item.productoId}')" class="btn-eliminar" style="margin-top: 10px;">Eliminar</button>
+            </div>
+        `;
+    }).join('');
+    
+    document.getElementById('totalCarrito').textContent = total;
+    totalDiv.style.display = 'block';
+}
+
+function actualizarCantidadCarrito(productoId, cantidad) {
+    const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+    const item = carrito.find(i => i.productoId === productoId);
+    if (item) {
+        item.cantidad = parseInt(cantidad, 10);
+        if (item.cantidad <= 0) {
+            eliminarDelCarrito(productoId);
+        } else {
+            localStorage.setItem('carrito', JSON.stringify(carrito));
+            loadCarrito();
+            updateCartCount();
+        }
+    }
+}
+
+function eliminarDelCarrito(productoId) {
+    const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+    const filtered = carrito.filter(item => item.productoId !== productoId);
+    localStorage.setItem('carrito', JSON.stringify(filtered));
+    loadCarrito();
+    updateCartCount();
+}
+
+function vaciarCarrito() {
+    if (confirm('¿Estás seguro de que deseas vaciar el carrito?')) {
+        localStorage.setItem('carrito', JSON.stringify([]));
+        loadCarrito();
+        updateCartCount();
+    }
+}
+
+function procesarCarrito() {
+    const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+    if (carrito.length === 0) return alert('El carrito está vacío');
+    
+    carrito.forEach(item => {
+        confirmarCompra({ preventDefault: () => {} }, item.productoId, item.cantidad);
+    });
+    
+    localStorage.setItem('carrito', JSON.stringify([]));
+    loadCarrito();
+    updateCartCount();
+    loadMisCompras();
+}
+
+// ========== LISTA DE DESEADOS ==========
+function agregarADeseados(productoId) {
+    const wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+    if (wishlist.find(id => id === productoId)) {
+        wishlist.splice(wishlist.indexOf(productoId), 1);
+        alert('Producto removido de deseados');
+    } else {
+        wishlist.push(productoId);
+        alert('Producto agregado a deseados');
+    }
+    localStorage.setItem('wishlist', JSON.stringify(wishlist));
+    updateWishlistCount();
+    loadMarketplace();
+}
+
+function loadDeseados() {
+    const wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+    const productos = JSON.parse(localStorage.getItem('productos')) || [];
+    const container = document.getElementById('deseadosContainer');
+    
+    if (wishlist.length === 0) {
+        container.innerHTML = '<p class="empty-message">No tienes productos en tu lista de deseados</p>';
+        return;
+    }
+    
+    const deseados = productos.filter(p => wishlist.includes(p.id));
+    container.innerHTML = deseados.map(producto => `
+        <div class="product-card">
+            <div class="sala-header">
+                <h3>${producto.title}</h3>
+                <div class="sala-rating">${producto.category}</div>
+            </div>
+            <div class="sala-body">
+                <p>${producto.description}</p>
+                <p><strong>Precio:</strong> $${producto.price}</p>
+                <p><strong>Stock:</strong> ${producto.stock}</p>
+                <div class="sala-buttons">
+                    <button onclick="agregarAlCarrito('${producto.id}')" ${producto.stock === 0 ? 'disabled' : ''}>Comprar</button>
+                    <button onclick="agregarADeseados('${producto.id}')" class="btn-editar">Remover de deseados</button>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+// ========== ZONA DE EMPRENDEDOR ==========
+function abrirZonaEmprendedor() {
+    const tieneMembresia = currentUser.membershipActive && currentUser.membershipExpiry && new Date(currentUser.membershipExpiry) > new Date();
+    if (!tieneMembresia) {
+        alert('Debes tener una membresía activa para acceder a la zona de emprendedor');
+        if (confirm('¿Deseas comprar una membresía ahora?')) {
+            comprarMembresia();
+        }
+        return;
+    }
+    document.getElementById('emprendedorPanel').classList.add('active');
+    document.getElementById('emprendedorDisplay').textContent = `👤 ${currentUser.nombre}`;
+    document.getElementById('ayudaUsuarioIdEmprendedor').value = currentUser.id;
+    loadMembresia();
+    loadMisProductos();
+    loadVentas();
+    loadSolicitudesEmprendedor();
+}
+
+function cerrarZonaEmprendedor() {
+    document.getElementById('emprendedorPanel').classList.remove('active');
+}
 
 // ========== UTILIDADES ==========
 function generateId() {

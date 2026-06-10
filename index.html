@@ -39,11 +39,7 @@
                 <input type="text" id="regName" placeholder="Nombre completo" required>
                 <input type="email" id="regEmail" placeholder="Correo" required>
                 <input type="password" id="regPassword" placeholder="Contraseña" required>
-                <select id="regRole" required>
-                    <option value="">Selecciona tu rol</option>
-                    <option value="estudiante">Estudiante</option>
-                    <option value="emprendedor">Emprendedor</option>
-                </select>
+                <input type="hidden" id="regRole" value="estudiante">
                 <button type="submit">Registrarse</button>
             </form>
             <p><a href="#" onclick="showLogin()">Volver al login</a></p>
@@ -64,9 +60,12 @@
 
         <div class="tab-buttons">
             <button class="tab-btn active" onclick="showTab('mercado')">Marketplace</button>
+            <button class="tab-btn" onclick="showTab('carrito')">Carrito (<span id="cartCount">0</span>)</button>
+            <button class="tab-btn" onclick="showTab('deseados')">Deseados (<span id="wishlistCount">0</span>)</button>
             <button class="tab-btn" onclick="showTab('misCompras')">Mis Compras</button>
             <button class="tab-btn" onclick="showTab('ayudaEstudiante')">Pedir Ayuda</button>
             <button class="tab-btn" onclick="showTab('formalizacion')">Formalización</button>
+            <button class="tab-btn" onclick="abrirZonaEmprendedor()" id="btnEmprendedor" style="background: var(--primary); margin-left: auto;">Mi Zona de Emprendedor</button>
         </div>
 
         <div id="mercado" class="tab-content active">
@@ -115,26 +114,42 @@
                 <li>5. Crea tu oferta de productos para vender en la intranet.</li>
             </ul>
         </div>
+
+        <div id="carrito" class="tab-content">
+            <h2>Carrito de Compras</h2>
+            <div id="carritoContainer" class="reservas-list"></div>
+            <div id="carritoTotal" style="margin-top: 20px; padding: 15px; background: var(--light); border-radius: 5px; font-weight: bold; display: none;">
+                <p>Total: $<span id="totalCarrito">0</span></p>
+                <button onclick="procesarCarrito()" class="btn-principal">Procesar Compra</button>
+                <button onclick="vaciarCarrito()" class="btn-editar">Vaciar Carrito</button>
+            </div>
+        </div>
+
+        <div id="deseados" class="tab-content">
+            <h2>Lista de Deseados</h2>
+            <div id="deseadosContainer" class="salas-grid"></div>
+        </div>
     </div>
 
-    <!-- PANEL EMPRENDEDOR -->
-    <div id="emprendedorPanel" class="panel">
-        <nav class="navbar">
-            <div class="nav-left">
-                <h2>INACAP Emprendedores</h2>
+    <!-- PANEL EMPRENDEDOR (MODAL) -->
+    <div id="emprendedorPanel" class="modal">
+        <div class="modal-content" style="max-width: 90%; width: 90%; max-height: 95vh; overflow-y: auto;">
+            <span class="close" onclick="cerrarZonaEmprendedor()">&times;</span>
+            <div class="navbar">
+                <div class="nav-left">
+                    <h2>INACAP Emprendedores</h2>
+                </div>
+                <div class="nav-right">
+                    <span id="emprendedorDisplay"></span>
+                </div>
             </div>
-            <div class="nav-right">
-                <span id="emprendedorDisplay"></span>
-                <button onclick="logout()">Cerrar Sesión</button>
-            </div>
-        </nav>
 
-        <div class="tab-buttons">
-            <button class="tab-btn active" onclick="showTabEmprendedor('miMembresia')">Membresía</button>
-            <button class="tab-btn" onclick="showTabEmprendedor('misProductos')">Mis Productos</button>
-            <button class="tab-btn" onclick="showTabEmprendedor('ventas')">Ventas</button>
-            <button class="tab-btn" onclick="showTabEmprendedor('ayudaEmprendedor')">Pedir Ayuda</button>
-        </div>
+            <div class="tab-buttons">
+                <button class="tab-btn active" onclick="showTabEmprendedor('miMembresia')">Membresía</button>
+                <button class="tab-btn" onclick="showTabEmprendedor('misProductos')">Mis Productos</button>
+                <button class="tab-btn" onclick="showTabEmprendedor('ventas')">Ventas</button>
+                <button class="tab-btn" onclick="showTabEmprendedor('ayudaEmprendedor')">Pedir Ayuda</button>
+            </div>
 
         <div id="miMembresia" class="tab-content active">
             <div class="stats-grid">
@@ -192,6 +207,7 @@
                 <button type="submit">Enviar solicitud</button>
             </form>
             <div id="misSolicitudesEmprendedor" class="reservas-list mt-20"></div>
+        </div>
         </div>
     </div>
 
