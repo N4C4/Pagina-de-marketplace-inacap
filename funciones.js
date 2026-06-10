@@ -396,11 +396,14 @@ function showUserPanel() {
         document.getElementById('ayudaUsuarioId').value = currentUser.id;
         
         const btnEmprendedor = document.getElementById('btnEmprendedor');
+        const btnComprarMembresia = document.getElementById('btnComprarMembresia');
         const tieneMembresia = currentUser.membershipActive && currentUser.membershipExpiry && new Date(currentUser.membershipExpiry) > new Date();
         if (tieneMembresia) {
             btnEmprendedor.style.display = 'block';
+            btnComprarMembresia.style.display = 'none';
         } else {
             btnEmprendedor.style.display = 'none';
+            btnComprarMembresia.style.display = 'block';
         }
         
         loadMarketplace();
@@ -696,6 +699,7 @@ Fecha de pago registrada: ${formatDate(hoy.toISOString())}.
 Próximo pago / fin de membresía: ${expiracion.toLocaleDateString('es-ES')}.`;
     alert(mensaje);
     loadMembresia();
+    showUserPanel();
     loadMisProductos();
 }
 
