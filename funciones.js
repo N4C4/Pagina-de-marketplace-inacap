@@ -231,7 +231,7 @@ function crearProductosEjemplo(vendedorId, adminId) {
             category: 'Alimentos',
             source: 'alumno',
             dateAdded: new Date().toISOString()
-        }
+        },
         {
             id: generateId(),
             vendedorId: vendedorId,
