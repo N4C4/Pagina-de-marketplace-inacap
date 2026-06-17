@@ -12,6 +12,8 @@ function initializeApp() {
     if (!Array.isArray(usuarios)) {
         usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
     }
+    // Normalizar forma de usuarios para evitar campos faltantes que rompan la app
+    usuarios = normalizeUsers(usuarios);
     if (!usuarios.some(u => u.email === 'admin@inacap.com')) {
         usuarios.push({
             id: generateId(),
@@ -370,8 +372,8 @@ function loginUser(event) {
     const usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
     const usuario = usuarios.find(u => u.email === email && u.password === password);
     if (usuario) {
-        currentUser = usuario;
-        localStorage.setItem('currentUser', JSON.stringify(usuario));
+        currentUser = normalizeUser(usuario);
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
         document.getElementById('loginEmail').value = '';
         document.getElementById('loginPassword').value = '';
         showUserPanel();
@@ -390,7 +392,7 @@ function registerUser(event) {
     if (usuarios.some(u => u.email === email)) {
         return alert('Este correo ya está registrado');
     }
-    const nuevoUsuario = {
+    const nuevoUsuario = normalizeUser({
         id: generateId(),
         nombre: nombre,
         email: email,
@@ -399,7 +401,7 @@ function registerUser(event) {
         fecha_registro: new Date().toISOString(),
         membershipActive: false,
         membershipExpiry: null
-    };
+    });
     usuarios.push(nuevoUsuario);
     localStorage.setItem('usuarios', JSON.stringify(usuarios));
     currentUser = nuevoUsuario;
@@ -1155,6 +1157,33 @@ function cerrarZonaEmprendedor() {
 // ========== UTILIDADES ==========
 function generateId() {
     return 'id_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+}
+
+// Asegura que un objeto usuario tenga los campos esperados
+function normalizeUser(u) {
+    if (!u || typeof u !== 'object') u = {};
+    return {
+        id: u.id || generateId(),
+        nombre: u.nombre || 'Usuario',
+        email: u.email || '',
+        password: u.password || '',
+        role: u.role || 'estudiante',
+        fecha_registro: u.fecha_registro || new Date().toISOString(),
+        membershipActive: typeof u.membershipActive === 'boolean' ? u.membershipActive : false,
+        membershipExpiry: u.membershipExpiry || null,
+        // campos opcionales para compatibilidad
+        membershipStartDate: u.membershipStartDate || null,
+        membershipDurationDays: u.membershipDurationDays || null,
+        membershipAmount: u.membershipAmount || null,
+        membershipServices: u.membershipServices || null
+    };
+}
+
+function normalizeUsers(list) {
+    const arr = Array.isArray(list) ? list : [];
+    const normalized = arr.map(normalizeUser);
+    localStorage.setItem('usuarios', JSON.stringify(normalized));
+    return normalized;
 }
 
 function formatDate(dateStr) {
