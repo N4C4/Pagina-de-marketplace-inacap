@@ -16,6 +16,19 @@ if (typeof window !== 'undefined' && new URLSearchParams(window.location.search)
     });
 }
 
+// Si se visita con ?logoutAll=1 se forzan cierres de sesión y se recarga la página
+if (typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('logoutAll') === '1') {
+    window.addEventListener('DOMContentLoaded', () => {
+        try {
+            logoutAllUsers();
+            console.log('Se forzó cierre de sesión en todos los usuarios');
+        } catch (e) {
+            console.error('Error al forzar cierre de sesión:', e);
+        }
+        location.reload();
+    });
+}
+
 // ========== INICIALIZACIÓN ==========
 document.addEventListener('DOMContentLoaded', () => {
     initializeApp();
@@ -1240,6 +1253,31 @@ function resetUsers() {
     const seeds = seedDefaultUsers().map(normalizeUser);
     localStorage.setItem('usuarios', JSON.stringify(seeds));
     console.log('Usuarios limpios y recreados:', seeds.map(s => s.email));
+}
+
+function logoutAllUsers() {
+    // Elimina la sesión local
+    try {
+        localStorage.removeItem('currentUser');
+    } catch (e) {
+        console.warn('No se pudo eliminar currentUser:', e);
+    }
+
+    // Normaliza y limpia marcas de sesión en cada usuario si existieran
+    try {
+        const usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]');
+        const cleaned = usuarios.map(u => {
+            const copy = Object.assign({}, u);
+            // eliminar posibles flags de sesión
+            delete copy.isLoggedIn;
+            delete copy.sessionToken;
+            delete copy.currentSession;
+            return normalizeUser(copy);
+        });
+        localStorage.setItem('usuarios', JSON.stringify(cleaned));
+    } catch (e) {
+        console.warn('No se pudo limpiar usuarios:', e);
+    }
 }
 
 function formatDate(dateStr) {
