@@ -1170,3 +1170,20 @@ function openModal(modalId) {
 function closeModal(modalId) {
     document.getElementById(modalId).classList.remove('active');
 }
+
+// ========== MANEJO DE ESTADO DE RED (ONLINE / OFFLINE) ==========
+function updateNetworkStatus() {
+    const statusEl = document.getElementById('network-status');
+    if (!statusEl) return;
+    if (navigator.onLine) {
+        statusEl.style.display = 'none';
+        statusEl.textContent = '';
+    } else {
+        statusEl.style.display = 'block';
+        statusEl.textContent = 'Conexión perdida — estás offline';
+    }
+}
+
+window.addEventListener('online', updateNetworkStatus);
+window.addEventListener('offline', updateNetworkStatus);
+document.addEventListener('DOMContentLoaded', updateNetworkStatus);

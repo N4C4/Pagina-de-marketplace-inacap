@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div id="network-status" style="display:none; position:fixed;left:12px;top:12px;padding:8px 12px;background:#ffdddd;color:#900;border:1px solid #f5c6cb;border-radius:6px;z-index:9999">Conexión perdida — estás offline</div>
     <!-- PANEL DE LOGIN -->
     <div id="loginPanel" class="panel active">
         <div class="login-container">
@@ -303,5 +304,14 @@
     </div>
 
     <script src="funciones.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js').catch(function(err){
+                    console.log('ServiceWorker registration failed:', err);
+                });
+            });
+        }
+    </script>
 </body>
 </html>
