@@ -2,6 +2,20 @@
 let currentUser = null;
 let editingProductId = null;
 
+// Si se visita con ?resetUsers=1 se reinician los usuarios (útil para limpieza desde GH Pages)
+if (typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('resetUsers') === '1') {
+    window.addEventListener('DOMContentLoaded', () => {
+        try {
+            resetUsers();
+            console.log('Usuarios reiniciados vía query param');
+        } catch (e) {
+            console.error('Error al reiniciar usuarios:', e);
+        }
+        // recarga para aplicar cambios inmediatamente
+        location.reload();
+    });
+}
+
 // ========== INICIALIZACIÓN ==========
 document.addEventListener('DOMContentLoaded', () => {
     initializeApp();
@@ -1184,6 +1198,48 @@ function normalizeUsers(list) {
     const normalized = arr.map(normalizeUser);
     localStorage.setItem('usuarios', JSON.stringify(normalized));
     return normalized;
+}
+
+function seedDefaultUsers() {
+    const hoy = new Date().toISOString();
+    return [
+        {
+            id: generateId(),
+            nombre: 'Administrador INACAP',
+            email: 'admin@inacap.com',
+            password: '123456',
+            role: 'admin',
+            fecha_registro: hoy,
+            membershipActive: false,
+            membershipExpiry: null
+        },
+        {
+            id: generateId(),
+            nombre: 'Emprendedor Ejemplo',
+            email: 'emprendedor@inacap.com',
+            password: '123456',
+            role: 'emprendedor',
+            fecha_registro: hoy,
+            membershipActive: true,
+            membershipExpiry: new Date(new Date().setDate(new Date().getDate() + 30)).toISOString()
+        },
+        {
+            id: generateId(),
+            nombre: 'Estudiante Ejemplo',
+            email: 'estudiante@inacap.com',
+            password: '123456',
+            role: 'estudiante',
+            fecha_registro: hoy,
+            membershipActive: false,
+            membershipExpiry: null
+        }
+    ];
+}
+
+function resetUsers() {
+    const seeds = seedDefaultUsers().map(normalizeUser);
+    localStorage.setItem('usuarios', JSON.stringify(seeds));
+    console.log('Usuarios limpios y recreados:', seeds.map(s => s.email));
 }
 
 function formatDate(dateStr) {
