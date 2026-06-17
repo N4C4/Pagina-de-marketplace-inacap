@@ -1,6 +1,5 @@
 const CACHE_NAME = 'site-cache-v1';
 const PRECACHE = [
-  '/',
   'index.html',
   'offline.html',
   'style.css',
